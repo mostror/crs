@@ -2,8 +2,8 @@
 function conectar(){
 	$mysql_host="127.0.0.1";
 	$mysql_database = "crs";
-	$mysql_user = "root";
-	$mysql_password = "";
+	$mysql_user = "crs";
+	$mysql_password = "crs";
 
 	//conexion
 	$conexion=mysql_connect($mysql_host,$mysql_user,$mysql_password) or die("Problemas en la conexion");
