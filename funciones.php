@@ -23,23 +23,24 @@ function sendhash($hash, $email){
 	</head> 
 	<body>
 	<p>Use this hash to log in: $hash</p>
+	<p>This is only going to be valid for one try. You will have to request a new one if the authentication fails.</p>
 	</body> 
 	</html> 
 	";
 	
 	$mail = new PHPMailer;
  
-	$mail->isSMTP();                                      // Set mailer to use SMTP
-	$mail->Host = 'smtp.gmail.com';                       // Specify main and backup server
-	$mail->SMTPAuth = true;                               // Enable SMTP authentication
-	$mail->Username = '2060.js@gmail.com';                // SMTP username
-	$mail->Password = 'navemostro';         		      // SMTP password
-	$mail->SMTPSecure = 'tls';                            // Enable encryption, 'ssl' also accepted
-	$mail->Port = 587;                                    //Set the SMTP port number - 587 for authenticated TLS
-	$mail->setFrom('2060.js@gmail.com', 'Julian Sanchez');     //Set who the message is to be sent from
-	$mail->addAddress($email);  // Add a recipient
-	$mail->WordWrap = 50;                                 // Set word wrap to 50 characters
-	$mail->isHTML(true);                                  // Set email format to HTML
+	$mail->isSMTP();
+	$mail->Host = 'smtp.gmail.com';
+	$mail->SMTPAuth = true;
+	$mail->Username = '2060.js@gmail.com';		//This mail was created solely for this purpose.
+	$mail->Password = 'navemostro';				//That's why it's password is displayed so publicly
+	$mail->SMTPSecure = 'tls';
+	$mail->Port = 587;
+	$mail->setFrom('2060.js@gmail.com', 'Julian Sanchez');
+	$mail->addAddress($email);
+	$mail->WordWrap = 50;
+	$mail->isHTML(true);
 	 
 	$mail->Subject = $subject;
 	$mail->Body    = $body;
@@ -52,7 +53,7 @@ function sendhash($hash, $email){
 	   exit;
 	}
  
-	echo 'Hash sent';
+	echo 'Hash successfully sent. Note that it will be valid for only one try.';
 	
 	
 	

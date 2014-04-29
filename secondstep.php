@@ -38,6 +38,7 @@
 
 	Please insert you hash here:
 	<input type="text" name="hash" id="hash">
+	(Note that a fail input will result in the invalidation of the authentication, and you will have to request a new hash)
 	<input type="submit" value="Login" id="buttonLogin">
 </form>
 <?php

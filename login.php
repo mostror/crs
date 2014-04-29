@@ -27,9 +27,9 @@ if(isset($_POST['action']))
 		if (mysql_num_rows($query) > 0)
 		{
 			while($result=mysql_fetch_assoc($query))
-				if ($query['email'] == $email AND $query['username'] == $username) die("Email and username in use. <a href=\"index.php\">Return</a>");
-				if ($query['email'] == $email) die("Email in use. <a href=\"index.php\">Return</a>");
-				if ($query['username'] == $username) die("Username in use. <a href=\"index.php\">Return</a>");	
+				if ($result['email'] == $email AND $result['username'] == $username OR mysql_num_rows($query) > 1) die("Email and username in use. <a href=\"index.php\">Return</a>");
+				if ($result['email'] == $email) die("Email in use. <a href=\"index.php\">Return</a>");
+				if ($result['username'] == $username) die("Username in use. <a href=\"index.php\">Return</a>");	
 		}
 		
 		mysql_query("INSERT INTO `users` (`username`, `email`, `password`) VALUES ('$username', '$email',PASSWORD('$password'))");
