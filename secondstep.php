@@ -37,7 +37,7 @@
 <form name="formLogin" method="post" action="secondstep.php">
 
 	Please insert you hash here:
-	<input type="text" name="hash" id="hash">
+	<input type="text" name="hash" id="hash"><br />
 	(Note that a fail input will result in the invalidation of the authentication, and you will have to request a new hash)
 	<input type="submit" value="Login" id="buttonLogin">
 </form>

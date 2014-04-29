@@ -7,7 +7,7 @@ if($_SESSION['second'] == 0)
 
 
 echo "Logged in successfully as ".$_SESSION['username']."<br />";
-echo "Here is the source code: https://github.com/mostror/crs";
+echo "Here is the source code: <a href=\"https://github.com/mostror/crs\">https://github.com/mostror/crs</a>";
 echo "<br /> <br /> Click <a href=\"logout.php\">here</a> to log out."
 
 ?>

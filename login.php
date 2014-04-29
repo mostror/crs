@@ -62,7 +62,7 @@ if(isset($_POST['action']))
 			$_SESSION['second']=0;
 			header("Location:secondstep.php");
 		}
-		if (mysql_num_rows($query)==1)
+		if (mysql_num_rows($query)==0)
 		{
 			die ("Wrong username or password. <a href=\"index.php\">Return</a>");
 		}
