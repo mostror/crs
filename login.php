@@ -31,16 +31,22 @@ if(isset($_POST['action']))
 				if ($result['email'] == $email) die("Email in use. <a href=\"index.php\">Return</a>");
 				if ($result['username'] == $username) die("Username in use. <a href=\"index.php\">Return</a>");	
 		}
-		
-		mysql_query("INSERT INTO `users` (`username`, `email`, `password`) VALUES ('$username', '$email',PASSWORD('$password'))");
+
+		$passwords=create_passwords();
+		if(sendpasswords($passwords, $email))
+			echo "<p>You have been sent with a list of one-time passwords. You will be asked to imput a diferent one each time you log in. When they run out, you will recieve another list.</p>";
+		else
+			echo "<p>An error ocurred!</p>";
+
+
+		mysql_query($string= "INSERT INTO `users` (`username`, `email`, `password`, `second_password`, `remaining_passwords` ) VALUES ('$username', '$email', PASSWORD('$password'), \"".$passwords[0]."\", 30)")or die($string);
 		
 		$_SESSION['id']=mysql_insert_id();
 		$_SESSION['username']=$username;
 		$_SESSION['email']=$email;
 		$_SESSION['second']=0;
 		
-		
-		die("Successfull account signup. Click <a href=\"secondstep.php\">here</a> to begin the second step authentication.");
+		die("<p>Successfull account signup. Click <a href=\"secondstep.php\">here</a> to begin the second step authentication.</p>");
 	}
 	
 	

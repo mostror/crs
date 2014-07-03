@@ -22,7 +22,7 @@ Login:
 	<tr>
 		<td></td>
 		<input type="hidden" name="action" value="login">
-		<td><input type="submit" value="Login" id="buttonLogin"></td>
+		<td><input type="submit" value="Login"></td>
 	</tr>
 	
 </table>

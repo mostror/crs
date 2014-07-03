@@ -1,7 +1,7 @@
 <?php 
 function conectar(){
 	$mysql_host="127.0.0.1";
-	$mysql_database = "crs";
+	$mysql_database = "crs2";
 	$mysql_user = "crs";
 	$mysql_password = "crs";
 
@@ -11,7 +11,7 @@ function conectar(){
 	return $conexion;
 }
 
-function sendhash($hash, $email){
+function sendpasswords($passwords, $email){
 	
 	require './phpmailer/PHPMailerAutoload.php';
 	
@@ -22,12 +22,22 @@ function sendhash($hash, $email){
 	<title>Login hash</title> 
 	</head> 
 	<body>
-	<p>Use this hash to log in: $hash</p>
-	<p>This is only going to be valid for one try. You will have to request a new one if the authentication fails.</p>
+	<p>Keep this list of hashes to log in:</p>";
+
+	foreach ($passwords as $key => $pass) {
+		$pass=substr($pass, 0, 4) . " " . substr($pass, 4, 4) . " " . substr($pass, 8, 4);
+		$body.=($key+1).") $pass<br />";
+		if(($key+1) % 5 == 0)
+			$body.="<br />";
+		
+	}
+
+	$body.="<p>Each will be used only once. You will be requested the number of the password each time you log in.</p>
 	</body> 
 	</html> 
 	";
 	
+
 	$mail = new PHPMailer;
  
 	$mail->isSMTP();
@@ -50,13 +60,28 @@ function sendhash($hash, $email){
 	if(!$mail->send()) {
 	   echo 'Message could not be sent.';
 	   echo 'Mailer Error: ' . $mail->ErrorInfo;
-	   exit;
+	   return false;
 	}
  
-	echo 'Hash successfully sent. Note that it will be valid for only one try.';
+	return true;
 	
-	
-	
-	//echo "HASH: $hash<br />";
+}
+
+function create_passwords(){
+
+	$seed = crypt("seed");
+	$exp = explode("$", $seed);
+	$seed = $exp[3];
+
+	$provided_passwords= 30;
+	$passwords = array();
+	for($i=0; $i < $provided_passwords; $i++){
+		$seed = md5($seed);
+		$seed = substr($seed, -12);
+		array_push($passwords, $seed);
+	}
+
+	$passwords = array_reverse($passwords);
+	return $passwords;
 }
 ?>

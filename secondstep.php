@@ -9,61 +9,52 @@
 	include "funciones.php";
 	conectar();
 
-	$query=mysql_query($string = "SELECT `password`, `hash`, `validhashtime` FROM users WHERE username='".$_SESSION['username']."'") or die ($string);
+	$query=mysql_query($string = "SELECT `password`, `second_password`, `remaining_passwords` FROM users WHERE username='".$_SESSION['username']."'") or die ($string);
 
 	$query=mysql_fetch_assoc($query);
 
-	$hash=$query['hash'];
-	$hashvt=$query['validhashtime'];
+	$second_password=$query['second_password'];
+	$remaining_passwords=$query['remaining_passwords'];
+	$input_second_password=explode(" ", $_POST['second_password']);
+	$input_second_password=implode("", $input_second_password); //remove spaces that might have been added
+	$max_passwords= 30;
 
-	if (isset($_POST['hash'])){
-
-		mysql_query("UPDATE users SET hash = null, validhashtime = null WHERE id=".$_SESSION['id']);
-
-		if ($hash == $_POST['hash'] && ((strtotime(date("Y-m-d H:i:s")) - strtotime($hashvt)) < 0)){
-			$_SESSION['second']=1;
-			header("Location:home.php");
+	if ($remaining_passwords == 0){
+		$passwords=create_passwords();
+		if (sendpasswords($passwords, $_SESSION['email']))
+		{
+			echo "The passwords run out. Check your email for a new list.<br />";
+			mysql_query($string="UPDATE users SET second_password = \"".$passwords[0]."\", remaining_passwords=".$max_passwords." WHERE id=".$_SESSION['id'])or die($string);
+			$remaining_passwords=$max_passwords;
 		}
 		else
-			if ($hash != $_POST['hash']) {
-				session_destroy();
-				echo "Invalid hash. please click <a href=\"index.php\">here</a> to log in again.";
-				die("");
-			}
-			else
-			{
-				session_destroy();
-				echo "Hash timed out. please click <a href=\"index.php\">here</a> to log in again.";
-				die("");
-			}
+			die("An error ocurred!");
 	}
 
-
-
-?>
-<form name="formLogin" method="post" action="secondstep.php">
-
-	Please insert you hash here:
-	<input type="text" name="hash" id="hash"><br />
-	(Note that a fail input will result in the invalidation of the authentication, and you will have to request a new hash)
-	<input type="submit" value="Login" id="buttonLogin">
-</form>
-<?php
-
-	if (($hash == null OR (!isset($_POST['hash']))) AND ((strtotime(date("Y-m-d H:i:s")) - strtotime($hashvt)) >= 0)) {
-
-		if ($hashvt != null AND ((strtotime(date("Y-m-d H:i:s")) - strtotime($hashvt)) > 0))
-		{
-			echo "The last hash has expired, you will receive a new one.<br />"; 
+	if (isset($_POST['second_password'])){
+		for ($i=$remaining_passwords; $i < $max_passwords ; $i++) {
+			$input_second_password = md5($input_second_password);
+			$input_second_password = substr($input_second_password, -12);
 		}
 
-		$newhash=md5($_SESSION['email'].$query['password'].$_SESSION['username'].date("Y-m-d H:i:s").rand(0,100000));
-		$newvalidhashdate = date("Y-m-d H:i:s", strtotime("+2 minutes"));
-		mysql_query("UPDATE users SET hash = '$newhash', validhashtime = '$newvalidhashdate' WHERE id=".$_SESSION['id']);
-
-
-		sendhash($newhash, $_SESSION['email']);
-
+		if ($input_second_password == $second_password){
+			$_SESSION['second']=1;
+			mysql_query($string="UPDATE users SET remaining_passwords=remaining_passwords-1 WHERE id=".$_SESSION['id'])or die($string);
+			header("Location:home.php");
+		}
+		else{
+			echo "The second password didn't match, please try again.<br/>";
+		}
 	}
 
+
+
 ?>
+
+<form name="formLogin" method="post" action="secondstep.php">
+
+	Please insert the password number <?php echo $max_passwords - $remaining_passwords + 1 ?> here (spacing is optional):
+	<input type="text" name="second_password"><br />
+	<input type="submit" value="Login">
+</form>
+<br /> <br /> Click <a href="logout.php">here</a> to log out.
