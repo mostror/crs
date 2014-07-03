@@ -57,6 +57,6 @@ function sendhash($hash, $email){
 	
 	
 	
-	//echo "$hash<br />";
+	//echo "HASH: $hash<br />";
 }
 ?>

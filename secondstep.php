@@ -16,10 +16,11 @@
 	$hash=$query['hash'];
 	$hashvt=$query['validhashtime'];
 
-
 	if (isset($_POST['hash'])){
+
 		mysql_query("UPDATE users SET hash = null, validhashtime = null WHERE id=".$_SESSION['id']);
-		if ($hash == $_POST['hash'] && $hashvt == (strtotime(date("Y-m-d H:i:s")) - time()) < 0){
+
+		if ($hash == $_POST['hash'] && ((strtotime(date("Y-m-d H:i:s")) - strtotime($hashvt)) < 0)){
 			$_SESSION['second']=1;
 			header("Location:home.php");
 		}
@@ -49,11 +50,9 @@
 </form>
 <?php
 
-			//echo "diferencia: ".(strtotime($hashvt) - time());
+	if (($hash == null OR (!isset($_POST['hash']))) AND ((strtotime(date("Y-m-d H:i:s")) - strtotime($hashvt)) >= 0)) {
 
-	if (($hash == null OR ((strtotime($hashvt) - time()) <= 0)) AND (!isset($_POST['hash']))){
-
-		if ((strtotime($hashvt) - time()) > 0)
+		if ($hashvt != null AND ((strtotime(date("Y-m-d H:i:s")) - strtotime($hashvt)) > 0))
 		{
 			echo "The last hash has expired, you will receive a new one.<br />"; 
 		}
@@ -61,6 +60,7 @@
 		$newhash=md5($_SESSION['email'].$query['password'].$_SESSION['username'].date("Y-m-d H:i:s").rand(0,100000));
 		$newvalidhashdate = date("Y-m-d H:i:s", strtotime("+2 minutes"));
 		mysql_query("UPDATE users SET hash = '$newhash', validhashtime = '$newvalidhashdate' WHERE id=".$_SESSION['id']);
+
 
 		sendhash($newhash, $_SESSION['email']);
 
